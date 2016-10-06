@@ -1,5 +1,8 @@
 package com;
 
+/**
+ * Created by User on 28.08.2016.
+ */
 public class EmplModel {
     private int id;
     private String name;

@@ -2,33 +2,40 @@ package com;
 
 /**
  * 1) file
- * 2) mem
- * 3) tcp - http
- * <p>
- * <p>
- * <p>
- * для того, чтобы подключиться к нашей базе -- нам необходимо
- * 1) создать коннект -- на базе урл, пароля и логина
- * 2) для запросов - юзать стейтмент - preparestatement -- то-есть специальн. представители пакета sql = которые позволяют делать запросы - обращение к базе
- * 3) execute - процесс коммита(транзакция)
- * <p>
- * <p>
- * развернуть в h2 -- базу данных, содерж табличку empl
- * вставку, селект -- сравнение записей, addbatch
- * <p>
- * CREATE TABLE EMPL(
- * ID INT,
- * NAME VARCHAR(25)
- * );
- * <p>
- * INSERT INTO EMPL(ID, NAME)
- * VALUES(1, 'EMPL1');
- * <p>
- * INSERT INTO EMPL(ID, NAME)
- * VALUES(2, 'EMPL1');
- * <p>
- * INSERT INTO EMPL(ID, NAME)
- * VALUES(3, 'EMPL1');
+ 2) mem
+ 3) tcp - http
+
+
+
+ для того, чтобы подключиться к нашей базе -- нам необходимо
+ 1) создать коннект -- на базе урл, пароля и логина
+ 2) для запросов - юзать стейтмент - preparestatement -- то-есть специальн. представители пакета sql = которые позволяют делать запросы - обращение к базе
+ 3) execute - процесс коммита(транзакция)
+
+
+ развернуть в h2 -- базу данных, содерж табличку empl
+ вставку, селект -- сравнение записей, addbatch
+
+
+
+ CREATE TABLE EMPL(
+ ID INT,
+ NAME VARCHAR(25)
+ );
+
+
+ INSERT INTO EMPL(ID, NAME)
+ VALUES(1, 'EMPL1');
+
+
+ INSERT INTO EMPL(ID, NAME)
+ VALUES(2, 'EMPL1');
+
+
+ INSERT INTO EMPL(ID, NAME)
+ VALUES(3, 'EMPL1');
+
+
  */
 
 import java.sql.*;
@@ -42,17 +49,16 @@ import java.util.Scanner;
  */
 public class JDBCTest {
 
-    public static final String EMPL_1 = "\n" +
-            "INSERT INTO EMPL(ID, NAME)\n" +
-            " VALUES(1, 'EMPL1')";
+    public static final String EMPL_1 = "INSERT INTO EMPL(ID, NAME)\n" +
+            " VALUES(4, 'EMPL11')";
 
     public static final String EMPL_2 = " \n" +
             " INSERT INTO EMPL(ID, NAME)\n" +
-            " VALUES(2, 'EMPL2')";
+            " VALUES(5, 'EMPL21')";
 
     public static final String EMPL_3 = " \n" +
             " INSERT INTO EMPL(ID, NAME)\n" +
-            " VALUES(3, 'EMPL3')";
+            " VALUES(6, 'EMPL31')";
 
     private Connection connection;
     private List<EmplModel> emplDB = new ArrayList();
@@ -60,11 +66,7 @@ public class JDBCTest {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         JDBCTest jdbcTest = new JDBCTest();
         jdbcTest.createTable();
-        jdbcTest.insertEmpl();
-        /*
-        for (int i = 0; i < 3; i++)
-            jdbcTest.insertNewEmpl();
-        */
+        jdbcTest.insertNewEmpl();
         jdbcTest.selectEmpls();
         jdbcTest.printDbData();
     }
@@ -72,12 +74,12 @@ public class JDBCTest {
     //org.h2.Driver
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         if (this.connection == null) {
-            Class.forName("org.h2.Driver"); //1-ый пункт
+            Class.forName("org.h2.Driver");//1-ый пункт
 //            connection.setAutoCommit(false);
 //            connection.commit();
 //            connection.rollback();
-//            this.connection = DriverManager.getConnection("jdbc:h2:mem:empl", "", "");//2-й пункт
-            this.connection = DriverManager.getConnection("jdbc:h2:file:/home/silverod/empl_test", "", "");//2-й пункт
+            //this.connection = DriverManager.getConnection("jdbc:h2:mem:empl", "", "");//2-й пункт
+            this.connection = DriverManager.getConnection("jdbc:h2:file:D:\\empl_test", "", "");//2-й пункт
         }
         return connection;
     }
@@ -93,7 +95,6 @@ public class JDBCTest {
                 " )";
 
         statement.execute(createTableSQL);
-
     }
 
 
@@ -115,19 +116,22 @@ public class JDBCTest {
         Connection connection = getConnection();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("id = ");
-        int id = scanner.nextInt();
-        System.out.println("name = ");
-        String name = scanner.next();
 
-        PreparedStatement preparedStatement =
-                connection.prepareStatement("INSERT INTO EMPL(ID, NAME)" +
-                        "VALUES(?, ?)");
+        for (int i = 0; i < 3; i++) {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("INSERT INTO EMPL(ID, NAME)" +
+                            "VALUES(?, ?)");
+            System.out.println("id = ");
+            int id = scanner.nextInt();
 
-        preparedStatement.setInt(1, id);
-        preparedStatement.setString(2, name);
-        preparedStatement.executeUpdate();
+            System.out.println("name = ");
+            String name = scanner.next();
 
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, name);
+
+            preparedStatement.executeUpdate();
+        }
     }
 
 
@@ -158,8 +162,8 @@ public class JDBCTest {
         }
         /**
          * EmplModel{id=1, name='EMPL1'}
-         * EmplModel{id=2, name='EMPL2'}
-         * EmplModel{id=3, name='EMPL3'}
+         EmplModel{id=2, name='EMPL2'}
+         EmplModel{id=3, name='EMPL3'}
          */
     }
 
